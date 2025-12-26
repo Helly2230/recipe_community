@@ -1,0 +1,17 @@
+{% extends "recipes/base.html" %}
+
+{% block content %}
+<h2>{{ object.title }}</h2>
+<p>By {{ object.author }} on {{ object.created_at }}</p>
+{% if object.photo %}
+<img src="{{ object.photo.url }}" alt="{{ object.title }}" width="300">
+{% endif %}
+<h3>Ingredients</h3>
+<p>{{ object.ingredients }}</p>
+<h3>Instructions</h3>
+<p>{{ object.instructions }}</p>
+{% if user == object.author %}
+<a href="{% url 'recipe-update' object.pk %}">Update</a>
+<a href="{% url 'recipe-delete' object.pk %}">Delete</a>
+{% endif %}
+{% endblock %}

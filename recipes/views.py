@@ -1,7 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, RecipeForm
+from .models import Recipe
 
 def home(request):
     return render(request, 'recipes/home.html')
@@ -37,3 +40,40 @@ def profile(request):
         'p_form': p_form
     }
     return render(request, 'recipes/profile.html', context)
+
+class RecipeListView(ListView):
+    model = Recipe
+    template_name = 'recipes/recipe_list.html'
+    context_object_name = 'recipes'
+    ordering = ['-created_at']
+
+class RecipeDetailView(DetailView):
+    model = Recipe
+    template_name = 'recipes/recipe_detail.html'
+
+class RecipeCreateView(LoginRequiredMixin, CreateView):
+    model = Recipe
+    form_class = RecipeForm
+    template_name = 'recipes/recipe_form.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+class RecipeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Recipe
+    form_class = RecipeForm
+    template_name = 'recipes/recipe_form.html'
+
+    def test_func(self):
+        recipe = self.get_object()
+        return self.request.user == recipe.author
+
+class RecipeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Recipe
+    template_name = 'recipes/recipe_confirm_delete.html'
+    success_url = '/recipes/'
+
+    def test_func(self):
+        recipe = self.get_object()
+        return self.request.user == recipe.author

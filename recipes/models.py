@@ -18,3 +18,14 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+class Recipe(models.Model):
+    title = models.CharField(max_length=200)
+    ingredients = models.TextField()
+    instructions = models.TextField()
+    photo = models.ImageField(upload_to='recipe_photos/', blank=True, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
