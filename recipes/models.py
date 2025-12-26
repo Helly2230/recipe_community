@@ -29,3 +29,23 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+class Comment(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.author} on {self.recipe}'
+
+class Rating(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    score = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+
+    class Meta:
+        unique_together = ('recipe', 'user')
+
+    def __str__(self):
+        return f'{self.user} rated {self.recipe} {self.score} stars'

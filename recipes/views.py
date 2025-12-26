@@ -3,8 +3,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, RecipeForm
-from .models import Recipe
+from django.db.models import Avg, Q
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, RecipeForm, CommentForm, RatingForm
+from .models import Recipe, Comment, Rating
 
 def home(request):
     return render(request, 'recipes/home.html')
@@ -47,9 +48,52 @@ class RecipeListView(ListView):
     context_object_name = 'recipes'
     ordering = ['-created_at']
 
-class RecipeDetailView(DetailView):
-    model = Recipe
-    template_name = 'recipes/recipe_detail.html'
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            return Recipe.objects.filter(
+                Q(title__icontains=query) | Q(ingredients__icontains=query)
+            ).order_by('-created_at')
+        return Recipe.objects.all().order_by('-created_at')
+
+def recipe_detail(request, pk):
+    recipe = get_object_or_404(Recipe, pk=pk)
+    comments = recipe.comments.all()
+    ratings = recipe.ratings.all()
+    average_rating = ratings.aggregate(Avg('score'))['score__avg'] if ratings else None
+
+    if request.method == 'POST':
+        if 'comment' in request.POST:
+            comment_form = CommentForm(request.POST)
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
+                comment.recipe = recipe
+                comment.author = request.user
+                comment.save()
+                return redirect('recipe-detail', pk=pk)
+        elif 'rating' in request.POST:
+            rating_form = RatingForm(request.POST)
+            if rating_form.is_valid():
+                rating, created = Rating.objects.get_or_create(
+                    recipe=recipe, user=request.user,
+                    defaults={'score': rating_form.cleaned_data['score']}
+                )
+                if not created:
+                    rating.score = rating_form.cleaned_data['score']
+                    rating.save()
+                return redirect('recipe-detail', pk=pk)
+    else:
+        comment_form = CommentForm()
+        rating_form = RatingForm()
+
+    context = {
+        'recipe': recipe,
+        'comments': comments,
+        'average_rating': average_rating,
+        'comment_form': comment_form,
+        'rating_form': rating_form,
+    }
+    return render(request, 'recipes/recipe_detail.html', context)
 
 class RecipeCreateView(LoginRequiredMixin, CreateView):
     model = Recipe

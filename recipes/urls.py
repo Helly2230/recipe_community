@@ -9,7 +9,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='recipes/logout.html'), name='logout'),
     path('profile/', views.profile, name='profile'),
     path('recipes/', views.RecipeListView.as_view(), name='recipe-list'),
-    path('recipe/<int:pk>/', views.RecipeDetailView.as_view(), name='recipe-detail'),
+    path('recipe/<int:pk>/', views.recipe_detail, name='recipe-detail'),
     path('recipe/new/', views.RecipeCreateView.as_view(), name='recipe-create'),
     path('recipe/<int:pk>/update/', views.RecipeUpdateView.as_view(), name='recipe-update'),
     path('recipe/<int:pk>/delete/', views.RecipeDeleteView.as_view(), name='recipe-delete'),
