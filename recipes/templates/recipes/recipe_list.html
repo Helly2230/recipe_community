@@ -1,44 +1,42 @@
 {% extends "recipes/base.html" %}
 
 {% block content %}
-<h2>Recipes</h2>
-<form method="get" class="mb-4">
-    <div class="input-group">
-        <input type="text" class="form-control" name="q" placeholder="Search by title or ingredients" value="{{ request.GET.q }}">
-        <button class="btn btn-primary" type="submit">Search</button>
+<h2 class="text-3xl font-bold mb-6">Recipes</h2>
+<form method="get" class="mb-6">
+    <div class="flex">
+        <input type="text" class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500" name="q" placeholder="Search by title or ingredients" value="{{ request.GET.q }}">
+        <button class="bg-blue-600 text-white px-6 py-2 rounded-r-lg hover:bg-blue-700 transition" type="submit">Search</button>
     </div>
 </form>
 {% if user.is_authenticated %}
-<a href="{% url 'recipe-create' %}" class="btn btn-success mb-3">Add Recipe</a>
+<a href="{% url 'recipe-create' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition mb-6 inline-block">Add Recipe</a>
 {% endif %}
-<div class="row">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 {% for recipe in recipes %}
-<div class="col-md-4 mb-4">
-    <div class="card">
-        {% if recipe.photo %}
-        <img src="{{ recipe.photo.url }}" class="card-img-top" alt="{{ recipe.title }}">
-        {% endif %}
-        <div class="card-body">
-            <h5 class="card-title"><a href="{% url 'recipe-detail' recipe.pk %}">{{ recipe.title }}</a></h5>
-            <p class="card-text">By {{ recipe.author }} on {{ recipe.created_at }}</p>
-        </div>
+<div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+    {% if recipe.photo %}
+    <img src="{{ recipe.photo.url }}" class="w-full h-48 object-cover" alt="{{ recipe.title }}">
+    {% endif %}
+    <div class="p-6">
+        <h5 class="text-xl font-semibold mb-2"><a href="{% url 'recipe-detail' recipe.pk %}" class="text-blue-600 hover:text-blue-800">{{ recipe.title }}</a></h5>
+        <p class="text-gray-600">By {{ recipe.author }} on {{ recipe.created_at }}</p>
     </div>
 </div>
 {% endfor %}
 </div>
 {% if is_paginated %}
-<nav aria-label="Page navigation">
-    <ul class="pagination">
+<div class="mt-8 flex justify-center">
+    <div class="flex space-x-2">
         {% if page_obj.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Previous</a></li>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">Previous</a>
         {% endif %}
         {% for num in page_obj.paginator.page_range %}
-        <li class="page-item {% if page_obj.number == num %}active{% endif %}"><a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
+        <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-4 py-2 {% if page_obj.number == num %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700{% endif %} rounded hover:bg-gray-300 transition">{{ num }}</a>
         {% endfor %}
         {% if page_obj.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Next</a></li>
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">Next</a>
         {% endif %}
-    </ul>
-</nav>
+    </div>
+</div>
 {% endif %}
 {% endblock %}
