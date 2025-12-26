@@ -1,10 +1,29 @@
 {% extends "recipes/base.html" %}
 
 {% block content %}
-<h2>{% if object %}Update{% else %}Create{% endif %} Recipe</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2>{% if object %}Update{% else %}Create{% endif %} Recipe</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.title.label_tag }}
+                {{ form.title }}
+            </div>
+            <div class="mb-3">
+                {{ form.ingredients.label_tag }}
+                {{ form.ingredients }}
+            </div>
+            <div class="mb-3">
+                {{ form.instructions.label_tag }}
+                {{ form.instructions }}
+            </div>
+            <div class="mb-3">
+                {{ form.photo.label_tag }}
+                {{ form.photo }}
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

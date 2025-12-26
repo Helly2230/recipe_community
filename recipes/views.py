@@ -4,11 +4,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.db.models import Avg, Q
+from django.core.paginator import Paginator
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, RecipeForm, CommentForm, RatingForm
 from .models import Recipe, Comment, Rating
 
 def home(request):
-    return render(request, 'recipes/home.html')
+    # Get featured recipes: highest rated in the last week
+    from django.utils import timezone
+    from datetime import timedelta
+    week_ago = timezone.now() - timedelta(days=7)
+    featured = Recipe.objects.filter(created_at__gte=week_ago).annotate(avg_rating=Avg('ratings__score')).order_by('-avg_rating')[:5]
+    return render(request, 'recipes/home.html', {'featured': featured})
 
 def register(request):
     if request.method == 'POST':
@@ -46,7 +52,7 @@ class RecipeListView(ListView):
     model = Recipe
     template_name = 'recipes/recipe_list.html'
     context_object_name = 'recipes'
-    ordering = ['-created_at']
+    paginate_by = 10
 
     def get_queryset(self):
         query = self.request.GET.get('q')
