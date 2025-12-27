@@ -1,25 +1,25 @@
 {% extends "recipes/base.html" %}
 
 {% block content %}
-<h2 class="text-3xl font-bold mb-6">Recipes</h2>
+<h2 class="text-3xl font-bold mb-6 text-white">Recipes</h2>
 <form method="get" class="mb-6">
     <div class="flex">
-        <input type="text" class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500" name="q" placeholder="Search by title or ingredients" value="{{ request.GET.q }}">
-        <button class="bg-blue-600 text-white px-6 py-2 rounded-r-lg hover:bg-blue-700 transition" type="submit">Search</button>
+        <input type="text" class="flex-1 px-4 py-2 neumorphism-inset text-white placeholder-gray-400 focus:outline-none" name="q" placeholder="Search by title or ingredients" value="{{ request.GET.q }}">
+        <button class="neumorphism-btn text-white px-6 py-2" type="submit">Search</button>
     </div>
 </form>
 {% if user.is_authenticated %}
-<a href="{% url 'recipe-create' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition mb-6 inline-block">Add Recipe</a>
+<a href="{% url 'recipe-create' %}" class="neumorphism-btn text-white px-4 py-2 mb-6 inline-block">Add Recipe</a>
 {% endif %}
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 {% for recipe in recipes %}
-<div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+<div class="neumorphism-card overflow-hidden">
     {% if recipe.photo %}
-    <img src="{{ recipe.photo.url }}" class="w-full h-48 object-cover" alt="{{ recipe.title }}">
+    <img src="{{ recipe.photo }}" class="w-full h-48 object-cover" alt="{{ recipe.title }}">
     {% endif %}
     <div class="p-6">
-        <h5 class="text-xl font-semibold mb-2"><a href="{% url 'recipe-detail' recipe.pk %}" class="text-blue-600 hover:text-blue-800">{{ recipe.title }}</a></h5>
-        <p class="text-gray-600">By {{ recipe.author }} on {{ recipe.created_at }}</p>
+        <h5 class="text-xl font-semibold mb-2"><a href="{% url 'recipe-detail' recipe.pk %}" class="text-white hover:text-gray-300">{{ recipe.title }}</a></h5>
+        <p class="text-gray-300">By {{ recipe.author }} on {{ recipe.created_at }}</p>
     </div>
 </div>
 {% endfor %}
@@ -28,13 +28,13 @@
 <div class="mt-8 flex justify-center">
     <div class="flex space-x-2">
         {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">Previous</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="neumorphism-btn text-white px-4 py-2">Previous</a>
         {% endif %}
         {% for num in page_obj.paginator.page_range %}
-        <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-4 py-2 {% if page_obj.number == num %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700{% endif %} rounded hover:bg-gray-300 transition">{{ num }}</a>
+        <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-4 py-2 {% if page_obj.number == num %}neumorphism-btn text-white{% else %}neumorphism-btn text-white{% endif %}">{{ num }}</a>
         {% endfor %}
         {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">Next</a>
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="neumorphism-btn text-white px-4 py-2">Next</a>
         {% endif %}
     </div>
 </div>

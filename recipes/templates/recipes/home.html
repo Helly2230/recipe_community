@@ -1,24 +1,24 @@
 {% extends "recipes/base.html" %}
 
 {% block content %}
-<div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-12 rounded-lg shadow-lg">
-    <h1 class="text-4xl font-bold mb-4">Welcome to Recipe Community!</h1>
-    <p class="text-xl mb-6">Share and discover amazing recipes.</p>
-    <a href="{% url 'recipe-list' %}" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">Browse Recipes</a>
+<div class="neumorphism text-white p-16 animate-slideInDown mx-4">
+    <h1 class="text-5xl font-bold mb-6 animate-fadeInUp">Welcome to Recipe Community!</h1>
+    <p class="text-xl mb-8 animate-fadeInUp animation-delay-200 opacity-90">Share and discover amazing recipes in style.</p>
+    <a href="{% url 'recipe-list' %}" class="inline-block neumorphism-btn text-white px-8 py-4 font-semibold animate-fadeInUp animation-delay-400">Browse Recipes</a>
 </div>
 
-<h3 class="text-2xl font-bold mt-12 mb-6">Featured Recipes This Week</h3>
-<div class="featured-slider overflow-hidden">
-<div class="flex space-x-6">
+<h3 class="text-3xl font-bold mt-16 mb-10 text-white animate-fadeInUp animation-delay-600">Featured Recipes This Week</h3>
+<div class="featured-slider overflow-hidden px-4">
+<div class="flex space-x-8">
 {% for recipe in featured %}
-<div class="bg-white rounded-lg shadow-md overflow-hidden w-80 flex-shrink-0">
+<div class="neumorphism-card overflow-hidden w-80 flex-shrink-0 animate-fadeInUp animation-delay-800">
     {% if recipe.photo %}
-    <img src="{{ recipe.photo.url }}" class="w-full h-48 object-cover" alt="{{ recipe.title }}">
+    <img src="{{ recipe.photo }}" class="w-full h-48 object-cover" alt="{{ recipe.title }}">
     {% endif %}
     <div class="p-6">
-        <h5 class="text-xl font-semibold mb-2"><a href="{% url 'recipe-detail' recipe.pk %}" class="text-blue-600 hover:text-blue-800">{{ recipe.title }}</a></h5>
-        <p class="text-gray-600 mb-2">By {{ recipe.author }}</p>
-        <p class="text-yellow-500">Average Rating: {{ recipe.avg_rating|floatformat:1 }} stars</p>
+        <h5 class="text-xl font-semibold mb-3"><a href="{% url 'recipe-detail' recipe.pk %}" class="text-white hover:text-gray-200 transition-colors">{{ recipe.title }}</a></h5>
+        <p class="text-gray-300 mb-3 text-sm">By {{ recipe.author }}</p>
+        <p class="text-yellow-300 font-medium">⭐ {{ recipe.avg_rating|floatformat:1 }} stars</p>
     </div>
 </div>
 {% endfor %}

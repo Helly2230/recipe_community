@@ -1,50 +1,64 @@
 {% extends "recipes/base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <h2>{{ recipe.title }}</h2>
-        <p class="text-muted">By {{ recipe.author }} on {{ recipe.created_at }}</p>
-        {% if recipe.photo %}
-        <img src="{{ recipe.photo.url }}" alt="{{ recipe.title }}" class="img-fluid mb-3">
-        {% endif %}
-        <h3>Ingredients</h3>
-        <p>{{ recipe.ingredients }}</p>
-        <h3>Instructions</h3>
-        <p>{{ recipe.instructions }}</p>
-        {% if average_rating %}
-        <p><strong>Average Rating:</strong> {{ average_rating|floatformat:1 }} stars</p>
-        {% endif %}
-        {% if user == recipe.author %}
-        <a href="{% url 'recipe-update' recipe.pk %}" class="btn btn-warning">Update</a>
-        <a href="{% url 'recipe-delete' recipe.pk %}" class="btn btn-danger">Delete</a>
-        {% endif %}
-    </div>
-    <div class="col-md-4">
-        <h3>Comments</h3>
-        {% for comment in comments %}
-        <div class="card mb-2">
-            <div class="card-body">
-                <p class="card-text">{{ comment.content }}</p>
-                <small class="text-muted">By {{ comment.author }} on {{ comment.created_at }}</small>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+        <div class="neumorphism p-8">
+            <h2 class="text-3xl font-bold text-white mb-4">{{ recipe.title }}</h2>
+            <p class="text-gray-300 mb-6">By {{ recipe.author }} on {{ recipe.created_at }}</p>
+            {% if recipe.photo %}
+            <img src="{{ recipe.photo }}" alt="{{ recipe.title }}" class="w-full h-64 object-cover rounded-lg mb-6">
+            {% endif %}
+            <h3 class="text-2xl font-semibold text-white mb-4">Ingredients</h3>
+            <p class="text-gray-200 mb-6">{{ recipe.ingredients }}</p>
+            <h3 class="text-2xl font-semibold text-white mb-4">Instructions</h3>
+            <p class="text-gray-200 mb-6">{{ recipe.instructions }}</p>
+            {% if average_rating %}
+            <p class="text-yellow-300 text-lg"><strong>Average Rating:</strong> ⭐ {{ average_rating|floatformat:1 }} stars</p>
+            {% endif %}
+            {% if user == recipe.author %}
+            <div class="flex space-x-4 mt-6">
+                <a href="{% url 'recipe-update' recipe.pk %}" class="neumorphism-btn text-white px-6 py-3">Update</a>
+                <a href="{% url 'recipe-delete' recipe.pk %}" class="neumorphism-btn text-white px-6 py-3">Delete</a>
             </div>
+            {% endif %}
         </div>
-        {% endfor %}
+    </div>
+    <div class="lg:col-span-1">
+        <div class="neumorphism p-6 mb-6">
+            <h3 class="text-xl font-semibold text-white mb-4">Comments</h3>
+            {% for comment in comments %}
+            <div class="neumorphism-inset p-4 mb-4">
+                <p class="text-gray-200 mb-2">{{ comment.content }}</p>
+                <small class="text-gray-400">By {{ comment.author }} on {{ comment.created_at }}</small>
+            </div>
+            {% endfor %}
+        </div>
 
         {% if user.is_authenticated %}
-        <h4>Add Comment</h4>
-        <form method="post">
-            {% csrf_token %}
-            {{ comment_form.as_p }}
-            <button type="submit" name="comment" class="btn btn-primary">Add Comment</button>
-        </form>
+        <div class="neumorphism p-6 mb-6">
+            <h4 class="text-lg font-semibold text-white mb-4">Add Comment</h4>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="{{ comment_form.content.id_for_label }}" class="block text-gray-300 mb-2">{{ comment_form.content.label }}</label>
+                    {{ comment_form.content }}
+                </div>
+                <button type="submit" name="comment" class="neumorphism-btn text-white w-full py-2">Add Comment</button>
+            </form>
+        </div>
 
-        <h4 class="mt-4">Rate Recipe</h4>
-        <form method="post">
-            {% csrf_token %}
-            {{ rating_form.as_p }}
-            <button type="submit" name="rating" class="btn btn-success">Rate</button>
-        </form>
+        <div class="neumorphism p-6">
+            <h4 class="text-lg font-semibold text-white mb-4">Rate Recipe</h4>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="{{ rating_form.score.id_for_label }}" class="block text-gray-300 mb-2">{{ rating_form.score.label }}</label>
+                    {{ rating_form.score }}
+                </div>
+                <button type="submit" name="rating" class="neumorphism-btn text-white w-full py-2">Rate</button>
+            </form>
+        </div>
         {% endif %}
     </div>
 </div>

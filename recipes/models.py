@@ -23,7 +23,7 @@ class Recipe(models.Model):
     title = models.CharField(max_length=200)
     ingredients = models.TextField()
     instructions = models.TextField()
-    photo = models.ImageField(upload_to='recipe_photos/', blank=True, null=True)
+    photo = models.URLField(blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 

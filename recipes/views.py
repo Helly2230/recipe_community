@@ -44,7 +44,8 @@ def profile(request):
 
     context = {
         'u_form': u_form,
-        'p_form': p_form
+        'p_form': p_form,
+        'user_recipes': request.user.recipe_set.all()
     }
     return render(request, 'recipes/profile.html', context)
 
